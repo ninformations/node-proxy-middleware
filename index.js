@@ -1,6 +1,8 @@
 var os = require('os');
 var http = require('http');
 var https = require('https');
+var hal = require('./hal');
+var zlib = require('zlib');
 var owns = {}.hasOwnProperty;
 
 module.exports = function proxyMiddleware(options) {
@@ -57,6 +59,14 @@ module.exports = function proxyMiddleware(options) {
       var statusCode = myRes.statusCode
         , headers = myRes.headers
         , location = headers.location;
+      
+      var acceptEncoding = myRes.headers['content-encoding'];
+      var contentLength = myRes.headers['content-length'];
+      if(contentLength) { delete myRes.headers['content-length']; } //removing content-length because we are altering response!!
+      if (!acceptEncoding) {
+        acceptEncoding = '';
+      }
+
       // Fix the location
       if (((statusCode > 300 && statusCode < 304) || statusCode === 201) && location && location.indexOf(options.href) > -1) {
         // absoulte path
@@ -68,7 +78,13 @@ module.exports = function proxyMiddleware(options) {
       myRes.on('error', function (err) {
         next(err);
       });
-      myRes.pipe(resp);
+
+      console.log(acceptEncoding);
+      if (acceptEncoding == 'gzip') {
+        myRes.pipe(zlib.createGunzip()).pipe(hal()).pipe(zlib.createGzip()).pipe(resp)
+      } else {
+        myRes.pipe(hal()).pipe(resp);
+      }
     });
     myReq.on('error', function (err) {
       next(err);
