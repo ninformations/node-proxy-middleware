@@ -29,6 +29,7 @@ JSONEncode.prototype._flush = function (callback) {
   }
 
   var halResponse = this.requestedJson.toString(this.enc);
+  
   try {
    var jsonDecoded = JSON.parse(halResponse);
    jsonDecoded.data = jsonDecoded._embedded;
