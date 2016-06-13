@@ -23,6 +23,11 @@ JSONEncode.prototype._transform = function _transform(chunk, enc, callback) {
 
 
 JSONEncode.prototype._flush = function (callback) {
+  if(!this.requestedJson) {
+    callback();
+    return;
+  }
+
   var halResponse = this.requestedJson.toString(this.enc);
   try {
    var jsonDecoded = JSON.parse(halResponse);
@@ -35,10 +40,15 @@ JSONEncode.prototype._flush = function (callback) {
     delete jsonDecoded.data['rh:doc'];
    }
 
+   var rhColl = jsonDecoded.data['rh:coll'];
+   if(rhColl) {
+      jsonDecoded.data.items = rhColl;
+      delete jsonDecoded.data['rh:coll'];
+   }
+
    this.push(new Buffer(JSON.stringify(jsonDecoded)));
  } catch(er) {
    console.error(er);
-
    this.push(new Buffer("error occurred in Transform"));
  } //this.push(this.requestedJson);
  callback();
