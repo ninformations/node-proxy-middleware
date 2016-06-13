@@ -32,9 +32,11 @@ JSONEncode.prototype._flush = function (callback) {
   
   try {
    var jsonDecoded = JSON.parse(halResponse);
+   if(!jsonDecoded._embedded) { callback(); return; }
+   
    jsonDecoded.data = jsonDecoded._embedded;
    delete jsonDecoded._embedded;
-
+   
    var rhDoc = jsonDecoded.data['rh:doc'];
    if(rhDoc) {
     jsonDecoded.data.items = rhDoc;
