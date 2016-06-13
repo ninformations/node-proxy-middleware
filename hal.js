@@ -48,11 +48,11 @@ JSONEncode.prototype._flush = function (callback) {
       jsonDecoded.data.items = rhColl;
       delete jsonDecoded.data['rh:coll'];
    }
-
+   jsonDecoded.status_code = 200;
    this.push(new Buffer(JSON.stringify(jsonDecoded)));
  } catch(er) {
    console.error(er);
-   this.push(new Buffer("error occurred in Transform"));
+   this.push(new Buffer('{"status_code":500,"error":"Error occurred in Transform"}'));
  } //this.push(this.requestedJson);
  callback();
 }
