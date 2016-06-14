@@ -46,6 +46,12 @@ JSONEncode.prototype._flush = function (callback) {
    var rhColl = jsonDecoded.data['rh:coll'];
    if(rhColl) {
       jsonDecoded.data.items = rhColl;
+      for(var i = 0; i < rhColl.length; i += 1) {
+        if(jsonDecoded.data.items[i]._id['$oid']) {
+          // translate according to client.
+          jsonDecoded.data.items[i]._id = jsonDecoded.data.items[i]._id['$oid'];
+        }
+      }
       delete jsonDecoded.data['rh:coll'];
    }
    jsonDecoded.status_code = 200;
