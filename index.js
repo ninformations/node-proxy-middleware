@@ -3,9 +3,11 @@ var http = require('http');
 var https = require('https');
 var hal = require('./hal');
 var zlib = require('zlib');
+var URLConverter = require('./urlconverter');
 var owns = {}.hasOwnProperty;
 
 module.exports = function proxyMiddleware(options) {
+
   //enable ability to quickly pass a url for shorthand setup
   if(typeof options === 'string'){
       options = require('url').parse(options);
@@ -54,6 +56,9 @@ module.exports = function proxyMiddleware(options) {
       // Forwarding the host breaks dotcloud
       delete opts.headers.host;
     }
+
+    var urlConverter = new URLConverter(opts.path);
+    opts.path = urlConverter.convert();
 
     var myReq = request(opts, function (myRes) {
       var statusCode = myRes.statusCode

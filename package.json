@@ -27,5 +27,8 @@
     "connect": "~3.3.5",
     "mocha": "~2.2.5",
     "serve-static": "~1.9.3"
+  },
+  "dependencies": {
+    "moment-timezone": "^0.5.4"
   }
 }
