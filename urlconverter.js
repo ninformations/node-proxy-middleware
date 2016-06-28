@@ -11,7 +11,7 @@ URLConverter.prototype.convert = function() {
     var parameterKey = queryParameters.split("=")[0];
     if(parameterKey == 'area_id') {
       var areaId = queryParameters.split("=")[1];
-      var queryForAreaIdFilter = '{"' + parameterKey + '":"' + areaId + '"}';
+      var queryForAreaIdFilter = '{"$or":[{"' + parameterKey + '":"' + areaId + '"},{"pan_india":"1"}]}';
       var queryForDateValidation = this.validateDate();
       this.path = apiPath + '?filter={"$and":[' + queryForAreaIdFilter + ',' + queryForDateValidation + ']}';
     }
